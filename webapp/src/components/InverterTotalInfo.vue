@@ -10,7 +10,7 @@
             <div class="col" v-if="solarChargerData.yieldTotal">
                 <CardElement
                     centerContent
-                    textVariant="text-bg-primary"
+                    :textVariant="solarChargerData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
                     :text="$t('invertertotalinfo.MpptTotalYieldTotal')"
                 >
                     <h2>
@@ -27,7 +27,7 @@
             <div class="col" v-if="solarChargerData.yieldDay">
                 <CardElement
                     centerContent
-                    textVariant="text-bg-primary"
+                    :textVariant="solarChargerData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
                     :text="$t('invertertotalinfo.MpptTotalYieldDay')"
                 >
                     <h2>
@@ -42,7 +42,11 @@
                 </CardElement>
             </div>
             <div class="col" v-if="solarChargerData.power">
-                <CardElement centerContent textVariant="text-bg-primary" :text="$t('invertertotalinfo.MpptTotalPower')">
+                <CardElement
+                    centerContent
+                    :textVariant="solarChargerData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
+                    :text="$t('invertertotalinfo.MpptTotalPower')"
+                >
                     <h2>
                         {{
                             $n(solarChargerData.power.v, 'decimal', {
@@ -107,7 +111,7 @@
                 <CardElement
                     centerContent
                     flexChildren
-                    textVariant="text-bg-primary"
+                    :textVariant="totalBattData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
                     :text="$t('invertertotalinfo.BatteryCharge')"
                 >
                     <div class="flex-fill" v-if="totalBattData.soc">
@@ -139,7 +143,7 @@
                 <CardElement
                     centerContent
                     flexChildren
-                    textVariant="text-bg-primary"
+                    :textVariant="totalBattData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
                     :text="$t('invertertotalinfo.BatteryPower')"
                 >
                     <div class="flex-fill" v-if="totalBattData.power">
@@ -169,7 +173,11 @@
             </div>
         </template>
         <div class="col" v-if="powerMeterData.enabled">
-            <CardElement centerContent textVariant="text-bg-primary" :text="$t('invertertotalinfo.HomePower')">
+            <CardElement
+                centerContent
+                :textVariant="powerMeterData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
+                :text="$t('invertertotalinfo.HomePower')"
+            >
                 <h2>
                     {{
                         $n(powerMeterData.Power.v, 'decimal', {
@@ -179,10 +187,21 @@
                     }}
                     <small class="text-muted">{{ powerMeterData.Power.u }}</small>
                 </h2>
+                <div v-if="powerMeterData.PowerL1 || powerMeterData.PowerL2 || powerMeterData.PowerL3" class="small mt-1 text-white-50">
+                    <span v-if="powerMeterData.PowerL1">L1: {{ $n(powerMeterData.PowerL1.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL1.d, maximumFractionDigits: powerMeterData.PowerL1.d }) }} {{ powerMeterData.PowerL1.u }}</span>
+                    <span v-if="powerMeterData.PowerL1 && (powerMeterData.PowerL2 || powerMeterData.PowerL3)"> | </span>
+                    <span v-if="powerMeterData.PowerL2">L2: {{ $n(powerMeterData.PowerL2.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL2.d, maximumFractionDigits: powerMeterData.PowerL2.d }) }} {{ powerMeterData.PowerL2.u }}</span>
+                    <span v-if="powerMeterData.PowerL2 && powerMeterData.PowerL3"> | </span>
+                    <span v-if="powerMeterData.PowerL3">L3: {{ $n(powerMeterData.PowerL3.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL3.d, maximumFractionDigits: powerMeterData.PowerL3.d }) }} {{ powerMeterData.PowerL3.u }}</span>
+                </div>
             </CardElement>
         </div>
         <div class="col" v-if="gridChargerData.enabled">
-            <CardElement centerContent textVariant="text-bg-primary" :text="$t('invertertotalinfo.GridChargerPower')">
+            <CardElement
+                centerContent
+                :textVariant="gridChargerData.isDataValid === false ? 'text-bg-danger' : 'text-bg-primary'"
+                :text="$t('invertertotalinfo.GridChargerPower')"
+            >
                 <h2>
                     {{
                         $n(gridChargerData.Power.v, 'decimal', {

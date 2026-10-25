@@ -74,6 +74,27 @@ float Controller::getPowerTotal() const
     return _upProvider->getPowerTotal();
 }
 
+std::optional<float> Controller::getPowerL1() const
+{
+    std::lock_guard<std::mutex> l(_mutex);
+    if (!_upProvider) { return std::nullopt; }
+    return _upProvider->getPowerL1();
+}
+
+std::optional<float> Controller::getPowerL2() const
+{
+    std::lock_guard<std::mutex> l(_mutex);
+    if (!_upProvider) { return std::nullopt; }
+    return _upProvider->getPowerL2();
+}
+
+std::optional<float> Controller::getPowerL3() const
+{
+    std::lock_guard<std::mutex> l(_mutex);
+    if (!_upProvider) { return std::nullopt; }
+    return _upProvider->getPowerL3();
+}
+
 uint32_t Controller::getLastUpdate() const
 {
     std::lock_guard<std::mutex> l(_mutex);

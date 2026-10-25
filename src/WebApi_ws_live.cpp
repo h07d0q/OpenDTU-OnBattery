@@ -112,6 +112,8 @@ void WebApiWsLiveClass::generateOnBatteryJsonResponse(JsonVariant& root, bool al
             if (yieldTotal) {
                 addTotalField(solarchargerObj, "yieldTotal", *yieldTotal, "kWh", 2);
             }
+
+            solarchargerObj["isDataValid"] = solarChargerAge < (30 * 1000);
         }
 
         if (!all) { _lastPublishSolarCharger = millis(); }
@@ -126,6 +128,8 @@ void WebApiWsLiveClass::generateOnBatteryJsonResponse(JsonVariant& root, bool al
             auto oInputPower = gridChargerStats->getInputPower();
             float pwr = oInputPower.value_or(0.0f);
             addTotalField(gridChargerObj, "Power", pwr, "W", 2);
+            auto lastUpdate = gridChargerStats->getLastUpdate();
+            gridChargerObj["isDataValid"] = lastUpdate > 0 && ((millis() - lastUpdate) < (30 * 1000));
         }
 
         if (!all) { _lastPublishGridCharger = millis(); }
@@ -152,6 +156,8 @@ void WebApiWsLiveClass::generateOnBatteryJsonResponse(JsonVariant& root, bool al
             if (spStats->isVoltageValid() && spStats->isCurrentValid()) {
                 addTotalField(batteryObj, "power", spStats->getVoltage() * spStats->getChargeCurrent(), "W", 1);
             }
+
+            batteryObj["isDataValid"] = spStats->getAgeSeconds() < 30;
         }
 
         if (!all) { _lastPublishBattery = millis(); }
@@ -163,6 +169,13 @@ void WebApiWsLiveClass::generateOnBatteryJsonResponse(JsonVariant& root, bool al
 
         if (config.PowerMeter.Enabled) {
             addTotalField(powerMeterObj, "Power", PowerMeter.getPowerTotal(), "W", 1);
+            auto pL1 = PowerMeter.getPowerL1();
+            if (pL1) { addTotalField(powerMeterObj, "PowerL1", *pL1, "W", 1); }
+            auto pL2 = PowerMeter.getPowerL2();
+            if (pL2) { addTotalField(powerMeterObj, "PowerL2", *pL2, "W", 1); }
+            auto pL3 = PowerMeter.getPowerL3();
+            if (pL3) { addTotalField(powerMeterObj, "PowerL3", *pL3, "W", 1); }
+            powerMeterObj["isDataValid"] = PowerMeter.isDataValid();
         }
 
         if (!all) { _lastPublishPowerMeter = millis(); }
@@ -303,6 +316,12 @@ void WebApiWsLiveClass::generateInverterChannelJsonResponse(JsonObject& root, st
             addField(chanTypeObj, inv, t, c, FLD_PAC);
             addField(chanTypeObj, inv, t, c, FLD_UAC);
             addField(chanTypeObj, inv, t, c, FLD_IAC);
+            addField(chanTypeObj, inv, t, c, FLD_UAC_1N);
+            addField(chanTypeObj, inv, t, c, FLD_IAC_1);
+            addField(chanTypeObj, inv, t, c, FLD_UAC_2N);
+            addField(chanTypeObj, inv, t, c, FLD_IAC_2);
+            addField(chanTypeObj, inv, t, c, FLD_UAC_3N);
+            addField(chanTypeObj, inv, t, c, FLD_IAC_3);
             if (t == TYPE_INV) {
                 addField(chanTypeObj, inv, t, c, FLD_PDC, "Power DC");
             } else {

@@ -417,7 +417,8 @@
     "inverterchannelinfo": {
         "String": "Ligne {num}",
         "Phase": "Phase {num}",
-        "General": "General"
+        "General": "General",
+        "ACOutput": "Sortie CA"
     },
     "invertertotalinfo": {
         "InverterTotalYieldTotal": "Onduleurs rendement total",
@@ -442,7 +443,13 @@
         "PowerFactor": "Facteur de puissance",
         "ReactivePower": "Puissance réactive",
         "Efficiency": "Efficacité",
-        "Irradiation": "Irradiation"
+        "Irradiation": "Irradiation",
+        "Voltage Ph1-N": "Tension L1-N",
+        "Current Ph1": "Courant L1",
+        "Voltage Ph2-N": "Tension L2-N",
+        "Current Ph2": "Courant L2",
+        "Voltage Ph3-N": "Tension L3-N",
+        "Current Ph3": "Courant L3"
     },
     "maintenancereboot": {
         "DeviceReboot": "Redémarrage de l'appareil",

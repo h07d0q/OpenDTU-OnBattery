@@ -10,6 +10,12 @@ export interface InverterStatistics {
     Power?: ValueObject;
     Voltage?: ValueObject;
     Current?: ValueObject;
+    'Voltage Ph1-N'?: ValueObject;
+    'Current Ph1'?: ValueObject;
+    'Voltage Ph2-N'?: ValueObject;
+    'Current Ph2'?: ValueObject;
+    'Voltage Ph3-N'?: ValueObject;
+    'Current Ph3'?: ValueObject;
     'Power DC'?: ValueObject;
     YieldDay?: ValueObject;
     YieldTotal?: ValueObject;
@@ -67,11 +73,13 @@ export interface SolarCharger {
     power?: ValueObject;
     yieldDay?: ValueObject;
     yieldTotal?: ValueObject;
+    isDataValid?: boolean;
 }
 
 export interface GridCharger {
     enabled: boolean;
     Power: ValueObject;
+    isDataValid?: boolean;
 }
 
 export interface Battery {
@@ -80,11 +88,16 @@ export interface Battery {
     voltage?: ValueObject;
     power?: ValueObject;
     current?: ValueObject;
+    isDataValid?: boolean;
 }
 
 export interface PowerMeter {
     enabled: boolean;
     Power: ValueObject;
+    PowerL1?: ValueObject;
+    PowerL2?: ValueObject;
+    PowerL3?: ValueObject;
+    isDataValid?: boolean;
 }
 
 export interface LiveData {

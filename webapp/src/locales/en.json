@@ -452,7 +452,8 @@
     "inverterchannelinfo": {
         "String": "String {num}",
         "Phase": "Phase {num}",
-        "General": "General"
+        "General": "General",
+        "ACOutput": "AC output"
     },
     "invertertotalinfo": {
         "InverterTotalYieldTotal": "Inverter Total Yield Total",
@@ -478,7 +479,13 @@
         "PowerFactor": "PowerFactor",
         "ReactivePower": "ReactivePower",
         "Efficiency": "Efficiency",
-        "Irradiation": "Irradiation"
+        "Irradiation": "Irradiation",
+        "Voltage Ph1-N": "Voltage L1-N",
+        "Current Ph1": "Current L1",
+        "Voltage Ph2-N": "Voltage L2-N",
+        "Current Ph2": "Current L2",
+        "Voltage Ph3-N": "Voltage L3-N",
+        "Current Ph3": "Current L3"
     },
     "maintenancereboot": {
         "DeviceReboot": "Device Reboot",

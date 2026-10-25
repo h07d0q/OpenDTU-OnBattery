@@ -89,6 +89,21 @@ void MqttHandleHassClass::publishConfig()
 
     publishDtuBinarySensor("Status", config.Mqtt.Lwt.Topic, config.Mqtt.Lwt.Value_Online, config.Mqtt.Lwt.Value_Offline, DEVICE_CLS_CONNECTIVITY, STATE_CLS_NONE, CATEGORY_DIAGNOSTIC);
 
+    if (config.PowerMeter.Enabled) {
+        publishDtuSensor("PowerMeter Power", "powermeter/powertotal", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Power L1", "powermeter/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Power L2", "powermeter/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Power L3", "powermeter/power3", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Voltage L1", "powermeter/voltage1", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Voltage L2", "powermeter/voltage2", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Voltage L3", "powermeter/voltage3", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Current L1", "powermeter/current1", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Current L2", "powermeter/current2", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Current L3", "powermeter/current3", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Energy Import", "powermeter/import", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
+        publishDtuSensor("PowerMeter Energy Export", "powermeter/export", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
+    }
+
     // Loop all inverters
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
         auto inv = Hoymiles.getInverterByPos(i);

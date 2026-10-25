@@ -26,7 +26,7 @@ private:
 
     uint32_t _lastPublishStats[INV_MAX_COUNT] = { 0 };
 
-    FieldId_t _publishFields[14] = {
+    FieldId_t _publishFields[23] = {
         FLD_UDC,
         FLD_IDC,
         FLD_PDC,
@@ -40,7 +40,16 @@ private:
         FLD_PF,
         FLD_EFF,
         FLD_IRR,
-        FLD_Q
+        FLD_Q,
+        FLD_UAC_1N,
+        FLD_IAC_1,
+        FLD_UAC_2N,
+        FLD_IAC_2,
+        FLD_UAC_3N,
+        FLD_IAC_3,
+        FLD_UAC_12,
+        FLD_UAC_23,
+        FLD_UAC_31
     };
 
     enum class Topic : unsigned {

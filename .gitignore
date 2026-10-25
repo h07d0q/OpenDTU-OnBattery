@@ -8,3 +8,6 @@ webapp_dist/
 /.idea
 /test/test_overscaling
 /test/test_chargedistributor
+
+data/
+
