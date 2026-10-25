@@ -7,6 +7,7 @@
 #include "Datastore.h"
 #include "MqttSettings.h"
 #include <Hoymiles.h>
+#include <powermeter/Controller.h>
 
 MqttHandleInverterTotalClass MqttHandleInverterTotal;
 
@@ -39,4 +40,9 @@ void MqttHandleInverterTotalClass::loop()
     MqttSettings.publish("dc/power", String(Datastore.getTotalDcPowerEnabled(), Datastore.getTotalDcPowerDigits()));
     MqttSettings.publish("dc/irradiation", String(Datastore.getTotalDcIrradiation(), 3));
     MqttSettings.publish("dc/is_valid", String(Datastore.getIsAllEnabledReachable()));
+
+    if (Configuration.get().PowerMeter.Enabled && PowerMeter.isDataValid()) {
+        float consumption = PowerMeter.getPowerTotal() + Datastore.getTotalAcPowerEnabled();
+        MqttSettings.publish("consumption/power", String(consumption, 1));
+    }
 }

@@ -429,7 +429,8 @@
         "MpptTotalPower": "Puissance totale solaire",
         "BatteryCharge": "Battery Charge",
         "BatteryPower": "Battery Power",
-        "HomePower": "Grid Power"
+        "HomePower": "Grid Power",
+        "Consumption": "Consommation totale"
     },
     "inverterchannelproperty": {
         "Power": "Puissance",

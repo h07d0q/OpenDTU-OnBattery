@@ -175,6 +175,8 @@ void WebApiWsLiveClass::generateOnBatteryJsonResponse(JsonVariant& root, bool al
             if (pL2) { addTotalField(powerMeterObj, "PowerL2", *pL2, "W", 1); }
             auto pL3 = PowerMeter.getPowerL3();
             if (pL3) { addTotalField(powerMeterObj, "PowerL3", *pL3, "W", 1); }
+            float consumption = PowerMeter.getPowerTotal() + Datastore.getTotalAcPowerEnabled();
+            addTotalField(powerMeterObj, "Consumption", consumption, "W", 1);
             powerMeterObj["isDataValid"] = PowerMeter.isDataValid();
         }
 

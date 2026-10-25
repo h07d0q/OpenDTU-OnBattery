@@ -194,6 +194,9 @@
                     <span v-if="powerMeterData.PowerL2 && powerMeterData.PowerL3"> | </span>
                     <span v-if="powerMeterData.PowerL3">L3: {{ $n(powerMeterData.PowerL3.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL3.d, maximumFractionDigits: powerMeterData.PowerL3.d }) }} {{ powerMeterData.PowerL3.u }}</span>
                 </div>
+                <div v-if="powerMeterData.Consumption" class="small mt-1 text-white-75">
+                    {{ $t('invertertotalinfo.Consumption') }}: {{ $n(powerMeterData.Consumption.v, 'decimal', { minimumFractionDigits: powerMeterData.Consumption.d, maximumFractionDigits: powerMeterData.Consumption.d }) }} {{ powerMeterData.Consumption.u }}
+                </div>
             </CardElement>
         </div>
         <div class="col" v-if="gridChargerData.enabled">

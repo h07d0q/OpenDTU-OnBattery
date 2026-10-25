@@ -465,7 +465,8 @@
         "BatteryCharge": "Batterie Ladezustand",
         "BatteryPower": "Batterie Leistung",
         "HomePower": "Leistung / Netz",
-        "GridChargerPower": "Netzladegerät AC Leistung"
+        "GridChargerPower": "Netzladegerät AC Leistung",
+        "Consumption": "Gesamtverbrauch"
     },
     "inverterchannelproperty": {
         "Power": "Leistung",

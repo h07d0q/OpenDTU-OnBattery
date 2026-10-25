@@ -97,6 +97,7 @@ export interface PowerMeter {
     PowerL1?: ValueObject;
     PowerL2?: ValueObject;
     PowerL3?: ValueObject;
+    Consumption?: ValueObject;
     isDataValid?: boolean;
 }
 

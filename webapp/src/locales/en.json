@@ -465,7 +465,8 @@
         "BatteryCharge": "Battery Charge",
         "BatteryPower": "Battery Power",
         "HomePower": "Grid Power",
-        "GridChargerPower": "Grid Charger AC Power"
+        "GridChargerPower": "Grid Charger AC Power",
+        "Consumption": "Total Consumption"
     },
     "inverterchannelproperty": {
         "Power": "Power",

@@ -90,6 +90,7 @@ void MqttHandleHassClass::publishConfig()
     publishDtuBinarySensor("Status", config.Mqtt.Lwt.Topic, config.Mqtt.Lwt.Value_Online, config.Mqtt.Lwt.Value_Offline, DEVICE_CLS_CONNECTIVITY, STATE_CLS_NONE, CATEGORY_DIAGNOSTIC);
 
     if (config.PowerMeter.Enabled) {
+        publishDtuSensor("Gesamtverbrauch", "consumption/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishDtuSensor("PowerMeter Power", "powermeter/powertotal", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishDtuSensor("PowerMeter Power L1", "powermeter/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishDtuSensor("PowerMeter Power L2", "powermeter/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
