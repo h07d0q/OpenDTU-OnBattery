@@ -132,6 +132,11 @@ class DataPointContainer {
             auto scopedLock = lock();
             auto otherScopedLock = source.lock();
 
+            if (!source._dataPoints.empty()) {
+                _lastUpdate = millis();
+                if (_lastUpdate == 0) { _lastUpdate = 1; }
+            }
+
             for (auto iter = source.cbegin(); iter != source.cend(); ++iter) {
                 auto pos = _dataPoints.find(iter->first);
 
@@ -157,15 +162,18 @@ class DataPointContainer {
                 if (iter->second.getTimestamp() == 0) { continue; } // "timeless" data points are ignored
                 diff = std::min(diff, now - iter->second.getTimestamp());
             }
-            return now - diff;
+            uint32_t newestDataPointTimestamp = (diff == std::numeric_limits<uint32_t>::max()/2) ? 0 : (now - diff);
+            return std::max(_lastUpdate, newestDataPointTimestamp);
         }
 
         void clear() {
             auto scopedLock = lock();
             _dataPoints.clear();
+            _lastUpdate = 0;
         }
 
     private:
         tMap _dataPoints;
+        uint32_t _lastUpdate = 0;
         mutable std::mutex _mutex;
 };

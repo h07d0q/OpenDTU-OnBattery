@@ -41,12 +41,14 @@ const std::array<const AlarmMessage_t, ALARM_MSG_COUNT> AlarmLogParser::_alarmMe
     { AlarmMessageType_t::ALL, 14, "Grid phase mutation", "Netz: Phasenänderung", "" },
     { AlarmMessageType_t::ALL, 15, "Grid transient fluctuation", "Netz: vorübergehende Schwankung", "" },
 
-    { AlarmMessageType_t::ALL, 36, "INV overvoltage or overcurrent", "", "" },
+    { AlarmMessageType_t::ALL, 36, "INV overvoltage or overcurrent", "WR: Überspannung oder Überstrom", "Onduleur: Surtension ou surintensité" },
 
     { AlarmMessageType_t::ALL, 46, "FB overvoltage", "FB Überspannung", "" },
     { AlarmMessageType_t::ALL, 47, "FB overcurrent", "FB Überstrom", "" },
     { AlarmMessageType_t::ALL, 48, "FB clamp overvoltage", "", "" },
     { AlarmMessageType_t::ALL, 49, "FB clamp overvoltage", "", "" },
+    { AlarmMessageType_t::ALL, 50, "FB: Overcurrent pre-warning (grid voltage fluctuation)", "FB: Überstrom-Vorwarnung (Netzspannungsschwankung)", "FB: Pré-avertissement de surintensité" },
+    { AlarmMessageType_t::ALL, 52, "DC bus voltage too low", "DC-Busspannung zu niedrig", "Tension du bus CC trop basse" },
 
     { AlarmMessageType_t::ALL, 61, "Calibration parameter error", "", "" },
     { AlarmMessageType_t::ALL, 62, "System configuration parameter error", "", "" },
