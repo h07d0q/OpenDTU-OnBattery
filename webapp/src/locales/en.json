@@ -483,10 +483,13 @@
         "Irradiation": "Irradiation",
         "Voltage Ph1-N": "Voltage L1-N",
         "Current Ph1": "Current L1",
+        "Power Ph1": "Power L1",
         "Voltage Ph2-N": "Voltage L2-N",
         "Current Ph2": "Current L2",
+        "Power Ph2": "Power L2",
         "Voltage Ph3-N": "Voltage L3-N",
-        "Current Ph3": "Current L3"
+        "Current Ph3": "Current L3",
+        "Power Ph3": "Power L3"
     },
     "maintenancereboot": {
         "DeviceReboot": "Device Reboot",

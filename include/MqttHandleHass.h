@@ -61,10 +61,13 @@ const byteAssign_fieldDeviceClass_t deviceFieldAssignment[] = {
     { FLD_Q, DEVICE_CLS_REACTIVE_POWER, STATE_CLS_MEASUREMENT },
     { FLD_UAC_1N, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT },
     { FLD_IAC_1, DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT },
+    { FLD_PAC_1, DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT },
     { FLD_UAC_2N, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT },
     { FLD_IAC_2, DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT },
+    { FLD_PAC_2, DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT },
     { FLD_UAC_3N, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT },
     { FLD_IAC_3, DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT },
+    { FLD_PAC_3, DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT },
     { FLD_UAC_12, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT },
     { FLD_UAC_23, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT },
     { FLD_UAC_31, DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT }
@@ -96,6 +99,7 @@ private:
     // Sensor
     static void publishSensor(JsonDocument& doc, const String& root_device, const String& unique_id_prefix, const String& name, const String& state_topic, const String& unit_of_measure, const String& icon, const DeviceClassType device_class, const StateClassType state_class, const CategoryType category);
     static void publishDtuSensor(const String& name, const String& state_topic, const String& unit_of_measure, const String& icon, const DeviceClassType device_class, const StateClassType state_class, const CategoryType category);
+    static void publishPowerMeterSensor(const String& name, const String& state_topic, const String& unit_of_measure, const String& icon, const DeviceClassType device_class, const StateClassType state_class, const CategoryType category);
     static void publishInverterSensor(std::shared_ptr<InverterAbstract> inv, const String& name, const String& state_topic, const String& unit_of_measure, const String& icon, const DeviceClassType device_class, const StateClassType state_class, const CategoryType category);
 
     static void publishInverterField(std::shared_ptr<InverterAbstract> inv, const ChannelType_t type, const ChannelNum_t channel, const byteAssign_fieldDeviceClass_t fieldType, const bool clear = false);
@@ -104,6 +108,7 @@ private:
 
     static void createInverterInfo(JsonDocument& doc, std::shared_ptr<InverterAbstract> inv);
     static void createDtuInfo(JsonDocument& doc);
+    static void createPowerMeterInfo(JsonDocument& doc);
 
     static void createDeviceInfo(JsonDocument& doc, const String& name, const String& identifiers, const String& configuration_url, const String& manufacturer, const String& model, const String& sw_version, const String& via_device = "");
 

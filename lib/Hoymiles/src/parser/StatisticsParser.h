@@ -47,11 +47,15 @@ enum FieldId_t {
     FLD_UAC_31,
     FLD_IAC_1,
     FLD_IAC_2,
-    FLD_IAC_3
+    FLD_IAC_3,
+    FLD_PAC_1,
+    FLD_PAC_2,
+    FLD_PAC_3
 };
 const char* const fields[] = { "Voltage", "Current", "Power", "YieldDay", "YieldTotal",
     "Voltage", "Current", "Power", "Frequency", "Temperature", "PowerFactor", "Efficiency", "Irradiation", "ReactivePower", "EventLogCount",
-    "Voltage Ph1-N", "Voltage Ph2-N", "Voltage Ph3-N", "Voltage Ph1-Ph2", "Voltage Ph2-Ph3", "Voltage Ph3-Ph1", "Current Ph1", "Current Ph2", "Current Ph3" };
+    "Voltage Ph1-N", "Voltage Ph2-N", "Voltage Ph3-N", "Voltage Ph1-Ph2", "Voltage Ph2-Ph3", "Voltage Ph3-Ph1", "Current Ph1", "Current Ph2", "Current Ph3",
+    "Power Ph1", "Power Ph2", "Power Ph3" };
 
 // indices to calculation functions, defined in hmInverter.h
 enum {
@@ -61,7 +65,8 @@ enum {
     CALC_TOTAL_PDC,
     CALC_TOTAL_EFF,
     CALC_CH_IRR,
-    CALC_TOTAL_IAC
+    CALC_TOTAL_IAC,
+    CALC_CH_PAC
 };
 enum { CMD_CALC = 0xffff };
 

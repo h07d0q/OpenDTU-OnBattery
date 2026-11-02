@@ -15,6 +15,7 @@ static float calcTotalPowerDc(StatisticsParser* iv, uint8_t arg0);
 static float calcTotalEffiency(StatisticsParser* iv, uint8_t arg0);
 static float calcChIrradiation(StatisticsParser* iv, uint8_t arg0);
 static float calcTotalCurrentAc(StatisticsParser* iv, uint8_t arg0);
+static float calcPhasePowerAc(StatisticsParser* iv, uint8_t arg0);
 
 using func_t = float(StatisticsParser*, uint8_t);
 
@@ -30,7 +31,8 @@ const calcFunc_t calcFunctions[] = {
     { CALC_TOTAL_PDC, &calcTotalPowerDc },
     { CALC_TOTAL_EFF, &calcTotalEffiency },
     { CALC_CH_IRR, &calcChIrradiation },
-    { CALC_TOTAL_IAC, &calcTotalCurrentAc }
+    { CALC_TOTAL_IAC, &calcTotalCurrentAc },
+    { CALC_CH_PAC, &calcPhasePowerAc }
 };
 
 const FieldId_t runtimeFields[] = {
@@ -53,6 +55,9 @@ const FieldId_t runtimeFields[] = {
     FLD_IAC_1,
     FLD_IAC_2,
     FLD_IAC_3,
+    FLD_PAC_1,
+    FLD_PAC_2,
+    FLD_PAC_3,
 };
 
 const FieldId_t dailyProductionFields[] = {
@@ -459,4 +464,24 @@ static float calcTotalCurrentAc(StatisticsParser* iv, uint8_t arg0)
     acCurrent += iv->getChannelFieldValue(TYPE_AC, CH0, FLD_IAC_2);
     acCurrent += iv->getChannelFieldValue(TYPE_AC, CH0, FLD_IAC_3);
     return acCurrent;
+}
+
+static float calcPhasePowerAc(StatisticsParser* iv, uint8_t arg0)
+{
+    FieldId_t uFld = FLD_UAC_1N;
+    FieldId_t iFld = FLD_IAC_1;
+    if (arg0 == 2) {
+        uFld = FLD_UAC_2N;
+        iFld = FLD_IAC_2;
+    } else if (arg0 == 3) {
+        uFld = FLD_UAC_3N;
+        iFld = FLD_IAC_3;
+    }
+    float u = iv->getChannelFieldValue(TYPE_AC, CH0, uFld);
+    float i = iv->getChannelFieldValue(TYPE_AC, CH0, iFld);
+    float pf = iv->getChannelFieldValue(TYPE_AC, CH0, FLD_PF);
+    if (pf <= 0.0f || pf > 1.0f) {
+        pf = 1.0f;
+    }
+    return u * i * pf;
 }

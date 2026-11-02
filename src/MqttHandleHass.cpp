@@ -90,19 +90,31 @@ void MqttHandleHassClass::publishConfig()
     publishDtuBinarySensor("Status", config.Mqtt.Lwt.Topic, config.Mqtt.Lwt.Value_Online, config.Mqtt.Lwt.Value_Offline, DEVICE_CLS_CONNECTIVITY, STATE_CLS_NONE, CATEGORY_DIAGNOSTIC);
 
     if (config.PowerMeter.Enabled) {
-        publishDtuSensor("Gesamtverbrauch", "consumption/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Power", "powermeter/powertotal", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Power L1", "powermeter/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Power L2", "powermeter/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Power L3", "powermeter/power3", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Voltage L1", "powermeter/voltage1", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Voltage L2", "powermeter/voltage2", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Voltage L3", "powermeter/voltage3", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Current L1", "powermeter/current1", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Current L2", "powermeter/current2", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Current L3", "powermeter/current3", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Energy Import", "powermeter/import", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
-        publishDtuSensor("PowerMeter Energy Export", "powermeter/export", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
+        // Clear legacy DTU-assigned PowerMeter topics to remove orphaned entities in HA
+        const String dtuId = getDtuUniqueId();
+        const char* legacySensors[] = {
+            "powermeter_power", "powermeter_power_l1", "powermeter_power_l2", "powermeter_power_l3",
+            "powermeter_voltage_l1", "powermeter_voltage_l2", "powermeter_voltage_l3",
+            "powermeter_current_l1", "powermeter_current_l2", "powermeter_current_l3",
+            "powermeter_energy_import", "powermeter_energy_export", "gesamtverbrauch"
+        };
+        for (const char* s : legacySensors) {
+            publish("sensor/" + dtuId + "/" + s + "/config", "");
+        }
+
+        publishPowerMeterSensor("Gesamtverbrauch", "consumption/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Power", "powermeter/powertotal", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Power L1", "powermeter/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Power L2", "powermeter/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Power L3", "powermeter/power3", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Voltage L1", "powermeter/voltage1", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Voltage L2", "powermeter/voltage2", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Voltage L3", "powermeter/voltage3", "V", "", DEVICE_CLS_VOLTAGE, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Current L1", "powermeter/current1", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Current L2", "powermeter/current2", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Current L3", "powermeter/current3", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishPowerMeterSensor("Energy Import", "powermeter/import", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
+        publishPowerMeterSensor("Energy Export", "powermeter/export", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
     }
 
     // Loop all inverters
@@ -294,6 +306,19 @@ void MqttHandleHassClass::createDtuInfo(JsonDocument& root)
         __COMPILED_GIT_HASH__);
 }
 
+void MqttHandleHassClass::createPowerMeterInfo(JsonDocument& root)
+{
+    createDeviceInfo(
+        root,
+        "PowerMeter",
+        getDtuUniqueId() + "_powermeter",
+        getDtuUrl(),
+        "OpenDTU-OnBattery",
+        "Smart Meter",
+        __COMPILED_GIT_HASH__,
+        getDtuUniqueId());
+}
+
 void MqttHandleHassClass::createDeviceInfo(
     JsonDocument& root,
     const String& name, const String& identifiers, const String& configuration_url,
@@ -442,6 +467,18 @@ void MqttHandleHassClass::publishDtuSensor(
     JsonDocument root;
     createDtuInfo(root);
     publishSensor(root, dtuId, dtuId, name, state_topic, unit_of_measure, icon, device_class, state_class, category);
+}
+
+void MqttHandleHassClass::publishPowerMeterSensor(
+    const String& name, const String& state_topic,
+    const String& unit_of_measure, const String& icon,
+    const DeviceClassType device_class, const StateClassType state_class, const CategoryType category)
+{
+    const String pmId = getDtuUniqueId() + "_powermeter";
+
+    JsonDocument root;
+    createPowerMeterInfo(root);
+    publishSensor(root, pmId, pmId, name, state_topic, unit_of_measure, icon, device_class, state_class, category);
 }
 
 void MqttHandleHassClass::publishInverterSensor(

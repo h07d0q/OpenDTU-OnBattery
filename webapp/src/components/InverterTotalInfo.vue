@@ -188,14 +188,9 @@
                     <small class="text-muted">{{ powerMeterData.Power.u }}</small>
                 </h2>
                 <div v-if="powerMeterData.PowerL1 || powerMeterData.PowerL2 || powerMeterData.PowerL3" class="small mt-1 text-white-50">
-                    <span v-if="powerMeterData.PowerL1">L1: {{ $n(powerMeterData.PowerL1.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL1.d, maximumFractionDigits: powerMeterData.PowerL1.d }) }} {{ powerMeterData.PowerL1.u }}</span>
-                    <span v-if="powerMeterData.PowerL1 && (powerMeterData.PowerL2 || powerMeterData.PowerL3)"> | </span>
-                    <span v-if="powerMeterData.PowerL2">L2: {{ $n(powerMeterData.PowerL2.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL2.d, maximumFractionDigits: powerMeterData.PowerL2.d }) }} {{ powerMeterData.PowerL2.u }}</span>
-                    <span v-if="powerMeterData.PowerL2 && powerMeterData.PowerL3"> | </span>
-                    <span v-if="powerMeterData.PowerL3">L3: {{ $n(powerMeterData.PowerL3.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL3.d, maximumFractionDigits: powerMeterData.PowerL3.d }) }} {{ powerMeterData.PowerL3.u }}</span>
-                </div>
-                <div v-if="powerMeterData.Consumption" class="small mt-1 text-white-75">
-                    {{ $t('invertertotalinfo.Consumption') }}: {{ $n(powerMeterData.Consumption.v, 'decimal', { minimumFractionDigits: powerMeterData.Consumption.d, maximumFractionDigits: powerMeterData.Consumption.d }) }} {{ powerMeterData.Consumption.u }}
+                    <div v-if="powerMeterData.PowerL1">L1: {{ $n(powerMeterData.PowerL1.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL1.d, maximumFractionDigits: powerMeterData.PowerL1.d }) }} {{ powerMeterData.PowerL1.u }}</div>
+                    <div v-if="powerMeterData.PowerL2">L2: {{ $n(powerMeterData.PowerL2.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL2.d, maximumFractionDigits: powerMeterData.PowerL2.d }) }} {{ powerMeterData.PowerL2.u }}</div>
+                    <div v-if="powerMeterData.PowerL3">L3: {{ $n(powerMeterData.PowerL3.v, 'decimal', { minimumFractionDigits: powerMeterData.PowerL3.d, maximumFractionDigits: powerMeterData.PowerL3.d }) }} {{ powerMeterData.PowerL3.u }}</div>
                 </div>
             </CardElement>
         </div>
