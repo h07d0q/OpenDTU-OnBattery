@@ -87,24 +87,15 @@ void MqttHandleHassClass::publishConfig()
     publishDtuSensor("AC Power", "ac/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
     publishDtuSensor("DC Power", "dc/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
 
-    // If any 3-phase inverter is present, also publish DTU AC Power per phase
-    bool hasThreePhaseInverter = false;
-    for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
-        auto inv = Hoymiles.getInverterByPos(i);
-        if (inv != nullptr && inv->Statistics()->hasChannelFieldValue(TYPE_AC, CH0, FLD_PAC_1)) {
-            hasThreePhaseInverter = true;
-            break;
-        }
-    }
-    if (hasThreePhaseInverter) {
-        publishDtuSensor("AC Power L1", "ac/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("AC Power L2", "ac/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-        publishDtuSensor("AC Power L3", "ac/power3", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
-    }
-
     publishDtuBinarySensor("Status", config.Mqtt.Lwt.Topic, config.Mqtt.Lwt.Value_Online, config.Mqtt.Lwt.Value_Offline, DEVICE_CLS_CONNECTIVITY, STATE_CLS_NONE, CATEGORY_DIAGNOSTIC);
 
     const String dtuId = getDtuUniqueId();
+
+    // Clear legacy DTU-level AC Power phase sensors in HA if previously registered
+    publish("sensor/" + dtuId + "/ac_power_l1/config", "");
+    publish("sensor/" + dtuId + "/ac_power_l2/config", "");
+    publish("sensor/" + dtuId + "/ac_power_l3/config", "");
+
     // Clear old PowerMeter-assigned Gesamtverbrauch entity in HA
     publish("sensor/" + dtuId + "_powermeter/gesamtverbrauch/config", "");
 
