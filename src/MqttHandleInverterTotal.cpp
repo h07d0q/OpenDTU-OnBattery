@@ -41,6 +41,32 @@ void MqttHandleInverterTotalClass::loop()
     MqttSettings.publish("dc/irradiation", String(Datastore.getTotalDcIrradiation(), 3));
     MqttSettings.publish("dc/is_valid", String(Datastore.getIsAllEnabledReachable()));
 
+    // Phase power for multi-phase inverters
+    float totalAcPower1 = 0;
+    float totalAcPower2 = 0;
+    float totalAcPower3 = 0;
+    bool hasPhases = false;
+    for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
+        auto inv = Hoymiles.getInverterByPos(i);
+        if (inv != nullptr && inv->getEnablePolling() && inv->Statistics()->hasChannelFieldValue(TYPE_AC, CH0, FLD_PAC_1)) {
+            hasPhases = true;
+            totalAcPower1 += inv->Statistics()->getChannelFieldValue(TYPE_AC, CH0, FLD_PAC_1);
+            totalAcPower2 += inv->Statistics()->getChannelFieldValue(TYPE_AC, CH0, FLD_PAC_2);
+            totalAcPower3 += inv->Statistics()->getChannelFieldValue(TYPE_AC, CH0, FLD_PAC_3);
+        }
+    }
+    if (hasPhases) {
+        MqttSettings.publish("ac/power1", String(totalAcPower1, 1));
+        MqttSettings.publish("ac/power2", String(totalAcPower2, 1));
+        MqttSettings.publish("ac/power3", String(totalAcPower3, 1));
+        MqttSettings.publish("ac/power_1", String(totalAcPower1, 1));
+        MqttSettings.publish("ac/power_2", String(totalAcPower2, 1));
+        MqttSettings.publish("ac/power_3", String(totalAcPower3, 1));
+        MqttSettings.publish("ac/power_l1", String(totalAcPower1, 1));
+        MqttSettings.publish("ac/power_l2", String(totalAcPower2, 1));
+        MqttSettings.publish("ac/power_l3", String(totalAcPower3, 1));
+    }
+
     if (Configuration.get().PowerMeter.Enabled && PowerMeter.isDataValid()) {
         float consumption = PowerMeter.getPowerTotal() + Datastore.getTotalAcPowerEnabled();
         MqttSettings.publish("consumption/power", String(consumption, 1));

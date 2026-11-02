@@ -87,22 +87,41 @@ void MqttHandleHassClass::publishConfig()
     publishDtuSensor("AC Power", "ac/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
     publishDtuSensor("DC Power", "dc/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
 
+    // If any 3-phase inverter is present, also publish DTU AC Power per phase
+    bool hasThreePhaseInverter = false;
+    for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
+        auto inv = Hoymiles.getInverterByPos(i);
+        if (inv != nullptr && inv->Statistics()->hasChannelFieldValue(TYPE_AC, CH0, FLD_PAC_1)) {
+            hasThreePhaseInverter = true;
+            break;
+        }
+    }
+    if (hasThreePhaseInverter) {
+        publishDtuSensor("AC Power L1", "ac/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("AC Power L2", "ac/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+        publishDtuSensor("AC Power L3", "ac/power3", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+    }
+
     publishDtuBinarySensor("Status", config.Mqtt.Lwt.Topic, config.Mqtt.Lwt.Value_Online, config.Mqtt.Lwt.Value_Offline, DEVICE_CLS_CONNECTIVITY, STATE_CLS_NONE, CATEGORY_DIAGNOSTIC);
 
+    const String dtuId = getDtuUniqueId();
+    // Clear old PowerMeter-assigned Gesamtverbrauch entity in HA
+    publish("sensor/" + dtuId + "_powermeter/gesamtverbrauch/config", "");
+
     if (config.PowerMeter.Enabled) {
+        publishDtuSensor("Gesamtverbrauch", "consumption/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
+
         // Clear legacy DTU-assigned PowerMeter topics to remove orphaned entities in HA
-        const String dtuId = getDtuUniqueId();
         const char* legacySensors[] = {
             "powermeter_power", "powermeter_power_l1", "powermeter_power_l2", "powermeter_power_l3",
             "powermeter_voltage_l1", "powermeter_voltage_l2", "powermeter_voltage_l3",
             "powermeter_current_l1", "powermeter_current_l2", "powermeter_current_l3",
-            "powermeter_energy_import", "powermeter_energy_export", "gesamtverbrauch"
+            "powermeter_energy_import", "powermeter_energy_export"
         };
         for (const char* s : legacySensors) {
             publish("sensor/" + dtuId + "/" + s + "/config", "");
         }
 
-        publishPowerMeterSensor("Gesamtverbrauch", "consumption/power", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishPowerMeterSensor("Power", "powermeter/powertotal", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishPowerMeterSensor("Power L1", "powermeter/power1", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishPowerMeterSensor("Power L2", "powermeter/power2", "W", "", DEVICE_CLS_PWR, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
@@ -115,6 +134,8 @@ void MqttHandleHassClass::publishConfig()
         publishPowerMeterSensor("Current L3", "powermeter/current3", "A", "", DEVICE_CLS_CURRENT, STATE_CLS_MEASUREMENT, CATEGORY_NONE);
         publishPowerMeterSensor("Energy Import", "powermeter/import", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
         publishPowerMeterSensor("Energy Export", "powermeter/export", "kWh", "", DEVICE_CLS_ENERGY, STATE_CLS_TOTAL_INCREASING, CATEGORY_NONE);
+    } else {
+        publish("sensor/" + dtuId + "/gesamtverbrauch/config", "");
     }
 
     // Loop all inverters
@@ -183,9 +204,17 @@ void MqttHandleHassClass::publishInverterField(std::shared_ptr<InverterAbstract>
         chanNum = channel;
     }
 
+    String safeFieldName = fieldName;
+    safeFieldName.replace(" ", "_");
+    safeFieldName.replace("-", "_");
+
     const String configTopic = "sensor/dtu_" + serial
-        + "/" + "ch" + chanNum + "_" + fieldName
+        + "/" + "ch" + chanNum + "_" + safeFieldName
         + "/config";
+
+    if (safeFieldName != fieldName) {
+        publish("sensor/dtu_" + serial + "/" + "ch" + chanNum + "_" + fieldName + "/config", "");
+    }
 
     if (!clear) {
         const String stateTopic = MqttSettings.getPrefix() + MqttHandleInverter.getTopic(inv, type, channel, fieldType.fieldId);
@@ -205,7 +234,7 @@ void MqttHandleHassClass::publishInverterField(std::shared_ptr<InverterAbstract>
 
         root["name"] = name;
         root["stat_t"] = stateTopic;
-        root["uniq_id"] = serial + "_ch" + chanNum + "_" + fieldName;
+        root["uniq_id"] = serial + "_ch" + chanNum + "_" + safeFieldName;
 
         if (Configuration.get().Mqtt.Hass.Expire) {
             root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval()/1000U, Configuration.get().Mqtt.PublishInterval) * inv->getReachableThreshold();

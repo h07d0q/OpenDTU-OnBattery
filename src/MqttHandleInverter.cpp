@@ -122,7 +122,49 @@ void MqttHandleInverterClass::publishField(std::shared_ptr<InverterAbstract> inv
         return;
     }
 
-    MqttSettings.publish(topic, inv->Statistics()->getChannelFieldValueString(type, channel, fieldId));
+    const String valStr = inv->Statistics()->getChannelFieldValueString(type, channel, fieldId);
+    MqttSettings.publish(topic, valStr);
+
+    if (type == TYPE_AC && channel == CH0) {
+        const String prefix = inv->serialString() + "/0/";
+        if (fieldId == FLD_PAC_1) {
+            MqttSettings.publish(prefix + "power_1", valStr);
+            MqttSettings.publish(prefix + "power1", valStr);
+            MqttSettings.publish(prefix + "power_l1", valStr);
+        } else if (fieldId == FLD_PAC_2) {
+            MqttSettings.publish(prefix + "power_2", valStr);
+            MqttSettings.publish(prefix + "power2", valStr);
+            MqttSettings.publish(prefix + "power_l2", valStr);
+        } else if (fieldId == FLD_PAC_3) {
+            MqttSettings.publish(prefix + "power_3", valStr);
+            MqttSettings.publish(prefix + "power3", valStr);
+            MqttSettings.publish(prefix + "power_l3", valStr);
+        } else if (fieldId == FLD_IAC_1) {
+            MqttSettings.publish(prefix + "current_1", valStr);
+            MqttSettings.publish(prefix + "current1", valStr);
+            MqttSettings.publish(prefix + "current_l1", valStr);
+        } else if (fieldId == FLD_IAC_2) {
+            MqttSettings.publish(prefix + "current_2", valStr);
+            MqttSettings.publish(prefix + "current2", valStr);
+            MqttSettings.publish(prefix + "current_l2", valStr);
+        } else if (fieldId == FLD_IAC_3) {
+            MqttSettings.publish(prefix + "current_3", valStr);
+            MqttSettings.publish(prefix + "current3", valStr);
+            MqttSettings.publish(prefix + "current_l3", valStr);
+        } else if (fieldId == FLD_UAC_1N) {
+            MqttSettings.publish(prefix + "voltage_1", valStr);
+            MqttSettings.publish(prefix + "voltage1", valStr);
+            MqttSettings.publish(prefix + "voltage_l1", valStr);
+        } else if (fieldId == FLD_UAC_2N) {
+            MqttSettings.publish(prefix + "voltage_2", valStr);
+            MqttSettings.publish(prefix + "voltage2", valStr);
+            MqttSettings.publish(prefix + "voltage_l2", valStr);
+        } else if (fieldId == FLD_UAC_3N) {
+            MqttSettings.publish(prefix + "voltage_3", valStr);
+            MqttSettings.publish(prefix + "voltage3", valStr);
+            MqttSettings.publish(prefix + "voltage_l3", valStr);
+        }
+    }
 }
 
 String MqttHandleInverterClass::getTopic(std::shared_ptr<InverterAbstract> inv, const ChannelType_t type, const ChannelNum_t channel, const FieldId_t fieldId)
@@ -137,6 +179,7 @@ String MqttHandleInverterClass::getTopic(std::shared_ptr<InverterAbstract> inv, 
     } else {
         chanName = inv->Statistics()->getChannelFieldName(type, channel, fieldId);
         chanName.toLowerCase();
+        chanName.replace(" ", "_");
     }
 
     String chanNum;
