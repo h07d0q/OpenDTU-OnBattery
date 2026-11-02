@@ -91,11 +91,6 @@ void MqttHandleHassClass::publishConfig()
 
     const String dtuId = getDtuUniqueId();
 
-    // Clear legacy DTU-level AC Power phase sensors in HA if previously registered
-    publish("sensor/" + dtuId + "/ac_power_l1/config", "");
-    publish("sensor/" + dtuId + "/ac_power_l2/config", "");
-    publish("sensor/" + dtuId + "/ac_power_l3/config", "");
-
     // Clear old PowerMeter-assigned Gesamtverbrauch entity in HA
     publish("sensor/" + dtuId + "_powermeter/gesamtverbrauch/config", "");
 
